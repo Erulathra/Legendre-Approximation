@@ -13,7 +13,7 @@ class Plot:
         pyplot.xlabel('X')
         pyplot.ylabel('y')
 
-    def draw_func(self, func, name: str):
+    def draw_func(self, func, name: str = "func"):
         plot_x = np.linspace(self._minimum, self._maximum, 300)
         plot_y = np.zeros(300)
 

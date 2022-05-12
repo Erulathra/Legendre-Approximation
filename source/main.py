@@ -12,7 +12,8 @@ functions = (lambda x: 0.7 * math.fabs(x),
 
 def main():
     func = functions[0]
-    args = la.legendre_approximation(func, (-1, 1), 25, 0.00001)
+    app_range = (-1, 1)
+    args = la.legendre_approximation(func, app_range, 10, 0.00001)
     print(args)
 
     def approximation_polynomial(x): return la.calculate_approximation_polynomial(x, args)

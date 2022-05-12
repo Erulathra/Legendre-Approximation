@@ -36,13 +36,20 @@ def legendre_approximation(function,
     for k in range(degree):
         a, b = approximation_range
 
-        def integral_function(x): return function(x) * legendre_polynomial(x, k)
-        def integral_polynomial(x):
+        def function_times_legendre_polynomial(x):
+            new_x = transform_x(x, a, b)
+            return function(new_x) * legendre_polynomial(x, k)
+
+        def square_legendre_polynomial(x):
             result = legendre_polynomial(x, k)
             return result * result
 
-        polynomial_factor = newton_cotes_quadrature(integral_function, a, b, integral_epsilon)
-        polynomial_factor /= newton_cotes_quadrature(integral_polynomial, a, b, integral_epsilon)
+        polynomial_factor = newton_cotes_quadrature(function_times_legendre_polynomial, -1, 1, integral_epsilon)
+        polynomial_factor /= newton_cotes_quadrature(square_legendre_polynomial, -1, 1, integral_epsilon)
         result.append(polynomial_factor)
 
     return result
+
+
+def transform_x(x, a, b) -> float:
+    return (2 * x - a - b) / (b - a)
