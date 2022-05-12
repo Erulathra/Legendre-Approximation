@@ -37,9 +37,12 @@ def legendre_approximation(function,
         a, b = approximation_range
 
         def integral_function(x): return function(x) * legendre_polynomial(x, k)
+        def integral_polynomial(x):
+            result = legendre_polynomial(x, k)
+            return result * result
 
-        factor = 2 / 2*(k + 1)
-        polynomial_factor = factor * newton_cotes_quadrature(integral_function, -1, 1, integral_epsilon)
+        polynomial_factor = newton_cotes_quadrature(integral_function, a, b, integral_epsilon)
+        polynomial_factor /= newton_cotes_quadrature(integral_polynomial, a, b, integral_epsilon)
         result.append(polynomial_factor)
 
     return result
