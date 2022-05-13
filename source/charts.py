@@ -4,7 +4,7 @@ from matplotlib import pyplot
 
 class Plot:
     def __init__(self, minimum: float, maximum: float):
-        self._figure: pyplot.Figure = pyplot.figure(dpi=200)
+        self._figure: pyplot.Figure = pyplot.figure()
         self._axes: pyplot.Axes = self._figure.subplots()
 
         self._minimum = minimum
