@@ -1,4 +1,14 @@
+from rich.progress import track
+
 from newton_cotes import newton_cotes_quadrature
+
+
+def horner_scheme(x, arguments):
+    result = arguments[0]
+    for a in arguments[1:]:
+        result = result * x + a
+
+    return result
 
 
 def legendre_polynomial(x: float, degree: int) -> float:
@@ -20,6 +30,33 @@ def legendre_polynomial(x: float, degree: int) -> float:
     return result
 
 
+def legendre_polynomial_arguments(degree: int) -> list[list[float]]:
+    arguments = calculate_new_legendre_polynomial_arguments()
+    for i in range(degree):
+        arguments = calculate_new_legendre_polynomial_arguments(arguments)
+
+    return arguments
+
+
+def calculate_new_legendre_polynomial_arguments(arguments: list[list[float]] = None) -> [list[list[float]]]:
+    if arguments is None:
+        return [[1.]]
+    if len(arguments) == 1:
+        arguments.append([0., 1.])
+        return arguments
+
+    degree = len(arguments)
+    arguments.append([0. for _ in range(degree + 1)])
+
+    for j in range(1, degree + 1):
+        arguments[degree][j] = (2 * degree - 1) / degree * arguments[degree - 1][j - 1]
+
+    for j in range(degree - 1):
+        arguments[degree][j] -= (degree - 1) / degree * arguments[degree - 2][j]
+
+    return arguments
+
+
 def calculate_approximation_polynomial(x: float, a: float, b: float, args: list[float]) -> float:
     result = 0
     for n, argument in enumerate(args):
@@ -33,12 +70,15 @@ def legendre_approximation(function,
                            degree: int,
                            integral_epsilon: float) -> list[float]:
     result = []
-    for k in range(degree):
+    for k in track(range(degree), description=f"[green] Obliczanie aproksymacji dla {degree} węzłów"):
         a, b = approximation_range
+
+        legendre_arguments = legendre_polynomial_arguments(degree)
 
         def function_times_legendre_polynomial(t):
             x = transform_t(t, a, b)
-            return function(x) * legendre_polynomial(t, k)
+            polynomial_arguments = list(reversed(legendre_arguments[k]))
+            return function(x) * horner_scheme(t, polynomial_arguments)
 
         factor = (2 * k + 1) / 2
         polynomial_factor = factor * newton_cotes_quadrature(function_times_legendre_polynomial, -1, 1,

@@ -27,4 +27,4 @@ class Plot:
 
     def show(self):
         self._axes.legend()
-        self._figure.show()
+        pyplot.show()

@@ -1,3 +1,4 @@
+import random
 from itertools import count
 
 import numpy as np
@@ -15,10 +16,19 @@ def newton_cotes_quadrature(function, a: float, b: float, epsilon: float) -> flo
     previous_result = 0.
     for i in count(1):
         result = 0
-        for j in range(i):
-            # Calculate subrange size, and add quadrature of this subrange to result
-            interpolation_range = abs(a - b) / i
-            result += simpson_formula(function, a + interpolation_range * j, a + interpolation_range * (j + 1))
+
+        # generate interpolation nodes
+        interpolation_range = abs(a - b) / i
+        interpolation_nodes: list[float] = [node for node in np.arange(a, b, interpolation_range)]
+        interpolation_nodes.append(b)
+
+        # generate noise inside range
+        for j in range(1, len(interpolation_nodes) - 1):
+            noise = interpolation_range * 0.6
+            interpolation_nodes[j] += random.randint(-100, 100) / 100 * noise
+
+        for first_node, second_node in zip(interpolation_nodes, interpolation_nodes[1:]):
+            result += simpson_formula(function, first_node, second_node)
 
         if abs(result - previous_result) < epsilon:
             return result
