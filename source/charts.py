@@ -20,7 +20,7 @@ class Plot:
         for i in range(300):
             plot_y[i] = func(plot_x[i])
 
-        self._axes.plot(plot_x, plot_y , label=name)
+        self._axes.plot(plot_x, plot_y, label=name)
 
     def draw_points(self, X: np.ndarray, Y: np.ndarray):
         self._axes.scatter(X, Y, c="g")
