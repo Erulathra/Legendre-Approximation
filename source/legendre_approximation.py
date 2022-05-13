@@ -56,7 +56,8 @@ def calculate_approximation_polynomial(x: float,
 def legendre_approximation(function,
                            approximation_range: tuple[float, float],
                            epsilon: float,
-                           cotes_epsilon: float) -> list[float]:
+                           cotes_epsilon: float,
+                           error_epsilon: float = 0.001) -> list[float]:
     legendre_arguments = legendre_polynomial_arguments(0)
 
     for i in count(0):
@@ -64,7 +65,7 @@ def legendre_approximation(function,
 
         # calculate error
         def approximation_polynomial(x): return calculate_approximation_polynomial(x, approximation_range, result, legendre_arguments)
-        error = approximation_error(function, approximation_polynomial, approximation_range, cotes_epsilon)
+        error = approximation_error(function, approximation_polynomial, approximation_range, error_epsilon)
 
         print(f"Błąd approksymacji: {error}")
 
@@ -89,7 +90,7 @@ def calculate_legendre_approximation(function,
             return function(x) * horner_scheme(t, polynomial_arguments)
 
         factor = (2 * k + 1) / 2
-        polynomial_factor = factor * newton_cotes_quadrature(function_times_legendre_polynomial, -1, 1, 0.0001)
+        polynomial_factor = factor * newton_cotes_quadrature(function_times_legendre_polynomial, -1, 1, cotes_epsilon)
         result.append(polynomial_factor)
 
     return result
