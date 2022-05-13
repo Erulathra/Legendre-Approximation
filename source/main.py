@@ -1,6 +1,7 @@
 import math
 
 from rich import print
+from rich.console import Console
 
 import legendre_approximation as la
 from charts import Plot
@@ -17,11 +18,14 @@ def main():
     a, b = (-3, 5)
     # len_args = la.legendre_polynomial_arguments(100)
     # args = la.calculate_legendre_approximation(func, (a, b), len_args, 0.00001)
-    args = la.legendre_approximation(func, (a, b), 0.5, 0.00001, 0.01)
+    args = la.legendre_approximation(func, (a, b), 1, 0.001, 0.01)
     print(args)
 
-    len_args = la.legendre_polynomial_arguments(len(args))
-    def approximation_polynomial(x): return la.calculate_approximation_polynomial(x, (a, b), args, len_args)
+    console = Console()
+
+    with console.status("[bold]Pracuję nad wynikiem...") as status:
+        len_args = la.legendre_polynomial_arguments(len(args))
+        def approximation_polynomial(x): return la.calculate_approximation_polynomial(x, (a, b), args, len_args)
 
     plot = Plot(a, b)
     plot.draw_func(func, "Funkcja")
