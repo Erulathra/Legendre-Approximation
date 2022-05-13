@@ -8,17 +8,17 @@ from charts import Plot
 
 functions = (lambda x: 0.7 * math.fabs(x),
              lambda x: 2 ** (math.cos(x)),
-             lambda x: x ** 3 - 2 * x + 4 * x - 10,
+             lambda x: la.horner_scheme(x, [1, -1, 2, 4, -5, 1, 0, 1]),
              lambda x: math.sin(x),
              lambda x: math.sin(1/x) if x != 0 else 0)
 
 
 def main():
-    func = functions[4]
+    func = functions[3]
     a, b = (-3, 5)
     # len_args = la.legendre_polynomial_arguments(100)
     # args = la.calculate_legendre_approximation(func, (a, b), len_args, 0.00001)
-    args = la.legendre_approximation(func, (a, b), 1, 0.001, 0.01)
+    args = la.legendre_approximation(func, (a, b), 0.08, 0.001, 0.01)
     print(args)
 
     console = Console()

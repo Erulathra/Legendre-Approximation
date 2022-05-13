@@ -24,7 +24,7 @@ def newton_cotes_quadrature(function, a: float, b: float, epsilon: float) -> flo
 
         # generate noise inside range
         for j in range(1, len(interpolation_nodes) - 1):
-            noise = interpolation_range * 0.6
+            noise = interpolation_range * 0.5
             interpolation_nodes[j] += random.randint(-100, 100) / 100 * noise
 
         for first_node, second_node in zip(interpolation_nodes, interpolation_nodes[1:]):
