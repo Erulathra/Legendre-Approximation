@@ -18,7 +18,7 @@ def main():
     a, b = (-3, 5)
     # len_args = la.legendre_polynomial_arguments(100)
     # args = la.calculate_legendre_approximation(func, (a, b), len_args, 0.00001)
-    args = la.legendre_approximation(func, (a, b), 0.08, 0.001, 0.01)
+    args = la.legendre_approximation(func, (a, b), 0.005, 0.00001, 0.001)
     print(args)
 
     console = Console()
