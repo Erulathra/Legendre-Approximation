@@ -25,7 +25,7 @@ functions = (lambda x: 0.7 * math.fabs(x),
 
 function_name = ("0.7 * |x|",
                 "2^(cos(x))",
-                "Schemat Hornera",
+                "x^7 - x^6 + 2x^5 + 4x^4 - 5x^3 + x^2 + 1",
                 "sin(x)",
                 "sin(1/x)")
 
