@@ -1,4 +1,3 @@
-from email.policy import default
 import math
 import os
 
@@ -15,6 +14,7 @@ def cls():
 
 
 waiter_txt = "Wciśnij dowolny klawisz, aby kontynuować..."
+debug_str = ""
 
 
 functions = (lambda x: 5 * x + 3,
@@ -61,9 +61,11 @@ class Legendre_args:
 
 
 def main():
+    global debug_str
     user_choice = ''
-    function_index = 1
+    function_index = 0
     args = Legendre_args()
+    debug_str += "PARAMETRY:\n" + args.to_string() + "\n" + function_name[function_index] + "\n"
 
     while user_choice != 'q':
         cls()
@@ -80,14 +82,20 @@ def main():
         match user_choice:
             case '1':
                 function_index = choose_function(function_index) - 1
+                debug_str += function_name[function_index] + ":\n "
             case '2':
                 args = choose_arguments(args)
+                debug_str += "\nPARAMETRY:\n" + args.to_string() + "\n"
             case '3':
                 dynamic_approximation(functions[function_index], args)
+                debug_str += "\n\n"
             case '4':
                 static_approximation(functions[function_index], args)
+                debug_str += "\n\n"
             case _:
                 continue
+    
+    print("[ DEBUG ]\n", debug_str)
 
 
 def choose_function(function_index) -> int:
@@ -112,13 +120,14 @@ def choose_arguments(args : Legendre_args) -> Legendre_args:
 
 
 def dynamic_approximation(func, args : Legendre_args):
-    try:
-        print("[ Wciśnij Ctrl+C by przerwać obliczenia ]")
-        legendre_args = la.legendre_approximation(func, args.range.get() , args.epsilon, args.cotes_epsilon, args.error_epsilon)
-    except KeyboardInterrupt:
+    global debug_str
+    debug = ""
+    legendre_args, debug = la.legendre_approximation(func, args.range.get() , args.epsilon, args.cotes_epsilon, args.error_epsilon)
+    debug_str += "Errors: " + debug + "; "
+    if(legendre_args == 0):
         prompt.ask(f"Przerwano działanie. {waiter_txt}")
+        debug_str += " INTERRUPTED\n"
         return
-    
     plot_charts(func, legendre_args, 0, args.range)
 
 
@@ -131,6 +140,11 @@ def static_approximation(func, args : Legendre_args):
 
 
 def plot_charts(func, legendre_args, len_args, approximation_range : Range):
+    global debug_str
+    debug_str += "\nArguments: "
+    for item in legendre_args:
+        debug_str += str(item) + ", "
+    debug_str = debug_str[:-3]
     print(legendre_args)
     console = Console()
 

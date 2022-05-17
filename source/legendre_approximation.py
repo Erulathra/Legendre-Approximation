@@ -59,20 +59,26 @@ def legendre_approximation(function,
                            cotes_epsilon: float,
                            error_epsilon: float = 0.001) -> list[float]:
     legendre_arguments = legendre_polynomial_arguments(0)
+    # needed for report
+    error_list = ""
+    try:
+        print("[ Wciśnij Ctrl+C by przerwać obliczenia ]")
+        for i in count(0):
+            result = calculate_legendre_approximation(function, approximation_range, legendre_arguments, cotes_epsilon)
 
-    for i in count(0):
-        result = calculate_legendre_approximation(function, approximation_range, legendre_arguments, cotes_epsilon)
+            # calculate error
+            def approximation_polynomial(x): return calculate_approximation_polynomial(x, approximation_range, result, legendre_arguments)
+            error = approximation_error(function, approximation_polynomial, approximation_range, error_epsilon)
+            error_list += str(error) + ", "
 
-        # calculate error
-        def approximation_polynomial(x): return calculate_approximation_polynomial(x, approximation_range, result, legendre_arguments)
-        error = approximation_error(function, approximation_polynomial, approximation_range, error_epsilon)
+            print(f"Błąd aproksymacji: {error}")
 
-        print(f"Błąd approksymacji: {error}")
+            if error < epsilon:
+                return (result, error_list[:-3])
 
-        if error < epsilon:
-            return result
-
-        legendre_arguments = calculate_new_legendre_polynomial_arguments(legendre_arguments)
+            legendre_arguments = calculate_new_legendre_polynomial_arguments(legendre_arguments)
+    except KeyboardInterrupt:
+        return (0, error_list[:-3])
 
 
 def calculate_legendre_approximation(function,
