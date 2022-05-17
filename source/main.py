@@ -17,14 +17,16 @@ def cls():
 waiter_txt = "Wciśnij dowolny klawisz, aby kontynuować..."
 
 
-functions = (lambda x: 0.7 * math.fabs(x),
+functions = (lambda x: 5 * x + 3,
+             lambda x: 0.7 * math.fabs(x),
              lambda x: 2 ** (math.cos(x)),
              lambda x: la.horner_scheme(x, [1, -1, 2, 4, -5, 1, 0, 1]),
              lambda x: math.sin(x),
              lambda x: math.sin(1/x) if x != 0 else 0)
 
 
-function_name = ("0.7 * |x|",
+function_name = ("5x + 3",
+                "0.7 * |x|",
                 "2^(cos(x))",
                 "x^7 - x^6 + 2x^5 + 4x^4 - 5x^3 + x^2 + 1",
                 "sin(x)",
@@ -84,6 +86,8 @@ def main():
                 dynamic_approximation(functions[function_index], args)
             case '4':
                 static_approximation(functions[function_index], args)
+            case _:
+                continue
 
 
 def choose_function(function_index) -> int:
@@ -114,7 +118,6 @@ def dynamic_approximation(func, args : Legendre_args):
     except KeyboardInterrupt:
         prompt.ask(f"Przerwano działanie. {waiter_txt}")
         return
-    print(legendre_args)
     
     plot_charts(func, legendre_args, 0, args.range)
 
@@ -127,8 +130,8 @@ def static_approximation(func, args : Legendre_args):
     plot_charts(func, legendre_args, len_args, args.range)
 
 
-
 def plot_charts(func, legendre_args, len_args, approximation_range : Range):
+    print(legendre_args)
     console = Console()
 
     with console.status("[bold]Pracuję nad wynikiem...") as status:
