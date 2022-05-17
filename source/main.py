@@ -8,8 +8,13 @@ from rich.prompt import Prompt as prompt
 import legendre_approximation as la
 from charts import Plot
 
+
 def cls():
     os.system('cls' if os.name == 'nt' else 'clear')
+
+
+waiter_txt = "Wciśnij dowolny klawisz, aby kontynuować..."
+
 
 functions = (lambda x: 0.7 * math.fabs(x),
              lambda x: 2 ** (math.cos(x)),
@@ -17,11 +22,13 @@ functions = (lambda x: 0.7 * math.fabs(x),
              lambda x: math.sin(x),
              lambda x: math.sin(1/x) if x != 0 else 0)
 
+
 function_name = ("0.7 * |x|",
                 "2^(cos(x))",
                 "Schemat Hornera",
                 "sin(x)",
                 "sin(1/x)")
+
 
 class Range:
     def __init__(self) -> None:
@@ -34,6 +41,7 @@ class Range:
     
     def get(self):
         return (self.a, self.b)
+
 
 class Legendre_args:
     def __init__(self) -> None:
@@ -48,27 +56,8 @@ class Legendre_args:
              + f"Epsilon dla Newtona-Cotesa: {self.cotes_epsilon}\n"\
              + f"Epsilon błędu: {self.error_epsilon}"
 
+
 def main():
-    func = functions[3]
-    a, b = (-3, 5)
-    # len_args = la.legendre_polynomial_arguments(100)
-    # args = la.calculate_legendre_approximation(func, (a, b), len_args, 0.00001)
-    args = la.legendre_approximation(func, (a, b), 0.005, 0.00001, 0.001)
-    print(args)
-
-    console = Console()
-
-    with console.status("[bold]Pracuję nad wynikiem...") as status:
-        len_args = la.legendre_polynomial_arguments(len(args))
-        def approximation_polynomial(x): return la.calculate_approximation_polynomial(x, (a, b), args, len_args)
-
-    plot = Plot(a, b)
-    plot.draw_func(func, "Funkcja")
-    plot.draw_func(approximation_polynomial, "Wielomian Interpolacyjny")
-    plot.show()
-
-
-def main_interface():
     user_choice = ''
     function_index = 1
     args = Legendre_args()
@@ -79,26 +68,28 @@ def main_interface():
         print(args.to_string(), "\n")
         print("Wybierz, czy chcesz:",
             "(1) Wybrać funkcję",
-            "(2) Podać argumenty do przybliżenia Legendre'a",
-            "(3) Obliczyć przybliżenie",
+            "(2) Podać argumenty do aproksymacji",
+            "(3) Obliczyć aproksymację",
             "[dim]\[q - wyjście][/]", sep="\n\t")
         user_choice = input("> ")
+        print()
         match user_choice:
             case '1':
-                function_index = choose_function() - 1
+                function_index = choose_function(function_index) - 1
             case '2':
                 args = choose_arguments(args)
             case '3':
                 plot_charts(functions[function_index], args)
 
 
-def choose_function() -> int:
+def choose_function(function_index) -> int:
     i = 1
-    print("Wybierz funkcję:")
+    print(f"Wybierz funkcję [cyan]\[{function_index+1}][/]:")
     for name in function_name:
         print(f"\t({i}) {name}")
         i += 1
-    return int(input("> "))
+    choice = int(input("> ") or 0)
+    return choice if 1 <= choice <= len(function_name) else function_index+1
 
 
 def choose_arguments(args : Legendre_args) -> Legendre_args:
@@ -113,7 +104,12 @@ def choose_arguments(args : Legendre_args) -> Legendre_args:
 
 
 def plot_charts(func, args : Legendre_args):
-    legendre_args = la.legendre_approximation(func, args.range.get() , args.epsilon, args.cotes_epsilon, args.error_epsilon)
+    try:
+        print("[ Wciśnij Ctrl+C by przerwać obliczenia ]")
+        legendre_args = la.legendre_approximation(func, args.range.get() , args.epsilon, args.cotes_epsilon, args.error_epsilon)
+    except KeyboardInterrupt:
+        prompt.ask(f"Przerwano działanie. {waiter_txt}")
+        return
     print(legendre_args)
 
     console = Console()
@@ -129,4 +125,4 @@ def plot_charts(func, args : Legendre_args):
 
 
 if __name__ == "__main__":
-    main_interface()
+    main()
