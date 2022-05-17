@@ -1,3 +1,4 @@
+from email.policy import default
 import math
 import os
 
@@ -70,6 +71,7 @@ def main():
             "(1) Wybrać funkcję",
             "(2) Podać argumenty do aproksymacji",
             "(3) Obliczyć aproksymację",
+            "(4) Obliczyć aproksymację dla danej ilości węzłów",
             "[dim]\[q - wyjście][/]", sep="\n\t")
         user_choice = input("> ")
         print()
@@ -79,7 +81,9 @@ def main():
             case '2':
                 args = choose_arguments(args)
             case '3':
-                plot_charts(functions[function_index], args)
+                dynamic_approximation(functions[function_index], args)
+            case '4':
+                static_approximation(functions[function_index], args)
 
 
 def choose_function(function_index) -> int:
@@ -103,7 +107,7 @@ def choose_arguments(args : Legendre_args) -> Legendre_args:
     return args
 
 
-def plot_charts(func, args : Legendre_args):
+def dynamic_approximation(func, args : Legendre_args):
     try:
         print("[ Wciśnij Ctrl+C by przerwać obliczenia ]")
         legendre_args = la.legendre_approximation(func, args.range.get() , args.epsilon, args.cotes_epsilon, args.error_epsilon)
@@ -111,14 +115,28 @@ def plot_charts(func, args : Legendre_args):
         prompt.ask(f"Przerwano działanie. {waiter_txt}")
         return
     print(legendre_args)
+    
+    plot_charts(func, legendre_args, 0, args.range)
 
+
+def static_approximation(func, args : Legendre_args):
+    nodes = int(prompt.ask("Podaj liczbę węzłów", default="4")) - 1
+    len_args = la.legendre_polynomial_arguments(nodes)
+    legendre_args = la.calculate_legendre_approximation(func, args.range.get(), len_args, args.cotes_epsilon)
+
+    plot_charts(func, legendre_args, len_args, args.range)
+
+
+
+def plot_charts(func, legendre_args, len_args, approximation_range : Range):
     console = Console()
 
     with console.status("[bold]Pracuję nad wynikiem...") as status:
-        len_args = la.legendre_polynomial_arguments(len(legendre_args))
-        def approximation_polynomial(x): return la.calculate_approximation_polynomial(x, args.range.get(), legendre_args, len_args)
-
-    plot = Plot(args.range.a, args.range.b)
+        if len_args == 0:
+            len_args = la.legendre_polynomial_arguments(len(legendre_args))
+        def approximation_polynomial(x): return la.calculate_approximation_polynomial(x, approximation_range.get(), legendre_args, len_args)
+    
+    plot = Plot(approximation_range.a, approximation_range.b)
     plot.draw_func(func, "Funkcja")
     plot.draw_func(approximation_polynomial, "Wielomian Interpolacyjny")
     plot.show()
